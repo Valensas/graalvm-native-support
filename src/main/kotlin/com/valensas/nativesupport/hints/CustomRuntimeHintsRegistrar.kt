@@ -41,21 +41,21 @@ class CustomRuntimeHintsRegistrar : RuntimeHintsRegistrar {
             .scanPackages(packages)
             .forEach {
                 hints.reflection().registerType(it, *MemberCategory.values())
-                registerSerializable(hints, it, serializedClasses, classLoader)
+                registerSerializationHints(hints, it, serializedClasses, classLoader)
             }
     }
 
-    private fun registerSerializable(hints: RuntimeHints, clazz: Class<*>, serializedClasses: MutableSet<Class<*>>, classLoader: ClassLoader) {
+    private fun registerSerializationHints(hints: RuntimeHints, clazz: Class<*>, serializedClasses: MutableSet<Class<*>>, classLoader: ClassLoader) {
         if (clazz.isArray) return logger.trace("{} is interface or array, skipping", clazz)
         if (!serializedClasses.add(clazz)) return logger.trace("{} is already processed, skipping", clazz)
-        if (clazz.isInterface) return registerKnownInterface(hints, clazz, classLoader)
+        if (clazz.isInterface) return registerInterfaceSerializationHints(hints, clazz, classLoader)
 
         if (clazz.isPrimitive) {
-            registerPrimitive(clazz, hints)
+            registerPrimitiveSerializationHints(clazz, hints)
             return
         }
 
-        // Primitives are not serializable, this case should be after primitive check
+        // Primitives are not serializable but their boxed types are. This case should be after primitive check
         if (!Serializable::class.java.isAssignableFrom(clazz)) return logger.trace("{} is not serializable, skipping", clazz)
 
         @Suppress("UNCHECKED_CAST")
@@ -64,15 +64,15 @@ class CustomRuntimeHintsRegistrar : RuntimeHintsRegistrar {
         (clazz.declaredFields + clazz.fields).forEach {
             // Transient properties are not serialized, no need to add serialization hints
             if (!Modifier.isTransient(it.modifiers)) {
-                registerSerializable(hints, it.type, serializedClasses, classLoader)
+                registerSerializationHints(hints, it.type, serializedClasses, classLoader)
             } else {
                 logger.trace("Field {} of {} is transient, skipping", it, clazz)
             }
         }
 
-        clazz.superclass?.let { registerSerializable(hints, it, serializedClasses, classLoader) }
+        clazz.superclass?.let { registerSerializationHints(hints, it, serializedClasses, classLoader) }
 
-        registerCustomSerialization(
+        registerCustomSerializationHints(
             classLoader,
             clazz,
             hints,
@@ -82,18 +82,18 @@ class CustomRuntimeHintsRegistrar : RuntimeHintsRegistrar {
 
     /**
      * Using @java.io.Serial, the actual serialized class can be changed for a Serializable.
-     * This can not be easily detected trough reflection. This method attempts to detect and provide support
-     * for known cases with best-effort.
+     * This can not be easily detected trough reflection. This method attempts to detect and
+     * provide support for known cases with best-effort.
      */
-    private fun registerCustomSerialization(
+    private fun registerCustomSerializationHints(
         classLoader: ClassLoader,
         clazz: Class<*>,
         hints: RuntimeHints,
         serializedClasses: MutableSet<Class<*>>
     ) {
         // Use lambdas to not eagerly load unnecessary classes in case they are not
-        // present in the classpath. Ordering of this list is relevant, use longer
-        // package names first.
+        // present in the classpath.
+        // Ordering of this list is relevant, use longer package names first.
         val customSerializationMapping = listOf(
             "java.time.zone" to { classLoader.loadClass("java.time.zone.Ser") },
             "java.time.chrono" to { classLoader.loadClass("java.time.chrono.Ser") },
@@ -102,12 +102,12 @@ class CustomRuntimeHintsRegistrar : RuntimeHintsRegistrar {
 
         val customSerializedClass =
             customSerializationMapping.find { clazz.packageName.startsWith(it.first) }?.second ?: return
-        registerSerializable(hints, customSerializedClass(), serializedClasses, classLoader)
+        registerSerializationHints(hints, customSerializedClass(), serializedClasses, classLoader)
     }
 
-    private fun registerPrimitive(clazz: Class<*>, hints: RuntimeHints) {
+    private fun registerPrimitiveSerializationHints(clazz: Class<*>, hints: RuntimeHints) {
         // During serialization, primitive types are automatically boxed.
-        // Use the boxed type instead of the primitive.
+        // Use the boxed type instead of the primitive itself.
         val boxedType = primitiveToBoxed[clazz.canonicalName] ?: throw Exception(
             "Unknown primitive type $clazz"
         )
@@ -121,12 +121,12 @@ class CustomRuntimeHintsRegistrar : RuntimeHintsRegistrar {
     }
 
     /***
-     * Adding interfaces directly for serialization does not work. Only concrete implementation can
-     * be used. Searching for all implementations of an interface in the classpath is reasonable.
+     * Adding serialization hints for interfaces does not work. Only concrete implementations can
+     * be used. Searching for all implementations of an interface in the classpath is not reasonable.
      * This method tries to add serialization information for well-known interface/implementation
      * pairings with best-effort.
      */
-    private fun registerKnownInterface(hints: RuntimeHints, clazz: Class<*>, classLoader: ClassLoader) {
+    private fun registerInterfaceSerializationHints(hints: RuntimeHints, clazz: Class<*>, classLoader: ClassLoader) {
         val mapClasses = listOf(
             { java.util.HashMap::class.java },
             { java.util.LinkedHashMap::class.java },
