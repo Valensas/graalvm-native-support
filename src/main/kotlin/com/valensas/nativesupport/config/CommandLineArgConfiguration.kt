@@ -1,6 +1,7 @@
 package com.valensas.nativesupport.config
 
 import org.springframework.boot.ApplicationArguments
+import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 
 interface CommandLineArgConfiguration {
@@ -46,10 +47,11 @@ interface CommandLineArgConfiguration {
  */
 inline fun <reified I, T : I> CommandLineArgConfiguration.conditionalProxyOnPredicate(
     predicate: ConfigurationPredicate<Collection<String>>,
-    value: T
+    value: T,
+    methodsToDisable: Set<Method> = I::class.java.methods.toSet()
 ): I {
     val enabled = predicate.test(args.sourceArgs.toList())
-    val invocationHandler = OptionalBeanInvocationHandler(enabled, value)
+    val invocationHandler = OptionalBeanInvocationHandler(enabled, value, methodsToDisable)
     return Proxy.newProxyInstance(
         javaClass.classLoader,
         arrayOf(I::class.java),
