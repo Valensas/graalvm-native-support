@@ -12,6 +12,7 @@ class HazelcastRuntimeHintsRegistrar : RuntimeHintsRegistrar {
     override fun registerHints(hints: RuntimeHints, classLoader: ClassLoader?) {
         registerShutdown(hints, classLoader, "com.hazelcast.instance.impl.HazelcastInstanceProxy")
         hints.serialization().registerType(java.lang.Throwable::class.java)
+        hints.serialization().registerType(java.lang.Exception::class.java)
     }
 
     private fun registerShutdown(hints: RuntimeHints, classLoader: ClassLoader?, className: String) {
