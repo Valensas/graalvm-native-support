@@ -32,8 +32,8 @@ class HazelcastRuntimeHintsRegistrar : RuntimeHintsRegistrar {
         @Suppress("UNCHECKED_CAST")
         hints.serialization().registerType(clazz as Class<Serializable>)
 
-        if (clazz.superclass != null) {
-            registerForSerializationRecursive(hints, clazz)
+        if (clazz.superclass != null && clazz.superclass != Any::class.java) {
+            registerForSerializationRecursive(hints, clazz.superclass)
         }
     }
 
