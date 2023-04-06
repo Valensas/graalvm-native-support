@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.valensas"
-version = "0.4.0"
+version = "0.3.1"
 
 java.sourceCompatibility = JavaVersion.VERSION_17
 
@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencyManagement {
-    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:3.0.4") }
+    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:3.0.5") }
 }
 
 dependencies {
