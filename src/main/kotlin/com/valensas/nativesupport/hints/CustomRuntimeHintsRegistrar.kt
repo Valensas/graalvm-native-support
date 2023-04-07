@@ -1,10 +1,10 @@
 package com.valensas.nativesupport.hints
 
-import org.reflections.Reflections
 import org.slf4j.LoggerFactory
 import org.springframework.aot.hint.MemberCategory
 import org.springframework.aot.hint.RuntimeHints
 import org.springframework.aot.hint.RuntimeHintsRegistrar
+import org.springframework.data.util.TypeScanner
 
 /**
  * Registers runtime hints for all classes in packages defined in the
@@ -17,16 +17,16 @@ class CustomRuntimeHintsRegistrar : RuntimeHintsRegistrar {
 
     override fun registerHints(hints: RuntimeHints, classLoader: ClassLoader?) {
         val packageNames = System.getProperty("com.valensas.nativesupport.reflect-packages") ?: return
-        val packages = packageNames.split(",", " ", "\n").filter { it.isNotBlank() }.toTypedArray()
+        val packages = packageNames.split(",", " ", "\n").filter { it.isNotBlank() }
 
         logger.info("Setting reflection hints for classes in packages: {}", packages.joinToString(", "))
 
-        val reflections = Reflections(*packages)
-        reflections
-            .getSubTypesOf(java.lang.Object::class.java)
+        TypeScanner
+            .typeScanner(classLoader!!)
+            .scanPackages(packages)
             .forEach {
                 hints.reflection().registerType(it, *MemberCategory.values())
-                HintUtils.registerSerializationHints(hints, it, classLoader!!)
+                HintUtils.registerSerializationHints(hints, it, classLoader)
             }
     }
 }

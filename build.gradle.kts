@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.valensas"
-version = "0.3.3"
+version = "0.3.4"
 
 java.sourceCompatibility = JavaVersion.VERSION_17
 
@@ -28,6 +28,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.reflections:reflections:0.10.2")
+    implementation("org.springframework.data:spring-data-commons")
     compileOnly("org.springframework.boot:spring-boot")
     testImplementation(kotlin("test"))
 }
