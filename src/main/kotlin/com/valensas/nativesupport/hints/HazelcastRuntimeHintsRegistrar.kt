@@ -14,10 +14,11 @@ class HazelcastRuntimeHintsRegistrar : RuntimeHintsRegistrar {
 
     override fun registerHints(hints: RuntimeHints, classLoader: ClassLoader?) {
         registerShutdown(hints, classLoader, "com.hazelcast.instance.impl.HazelcastInstanceProxy")
+        HintUtils.registerSerializationHints(hints, StackTraceElement::class.java, classLoader!!)
 
         val reflections = Reflections("com.hazelcast")
         reflections.getSubTypesOf(Throwable::class.java).forEach {
-            HintUtils.registerSerializationHints(hints, it, classLoader!!)
+            HintUtils.registerSerializationHints(hints, it, classLoader)
         }
     }
 
