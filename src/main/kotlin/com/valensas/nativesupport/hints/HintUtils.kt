@@ -110,7 +110,8 @@ object HintUtils {
 
         val listClasses = listOf(
             { java.util.ArrayList::class.java },
-            { java.util.LinkedList::class.java }
+            { java.util.LinkedList::class.java },
+            { classLoader.loadClass("java.util.Collections\$EmptyList") }
         )
 
         val knownInterfaceImplementations = mapOf(
