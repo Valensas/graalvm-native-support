@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.aot.hint.RuntimeHints
 import java.io.Serializable
 import java.lang.reflect.Modifier
+import java.util.Set
 
 object HintUtils {
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -113,12 +114,23 @@ object HintUtils {
             { java.util.LinkedList::class.java },
             { classLoader.loadClass("java.util.Collections\$EmptyList") }
         )
+        val setClasses = listOf(
+            { java.util.HashSet::class.java },
+            { classLoader.loadClass("java.util.Collections\$EmptySet") },
+            { java.util.TreeSet::class.java },
+            { java.util.AbstractSet::class.java },
+            { java.util.BitSet::class.java },
+            { java.util.EnumSet::class.java },
+            { java.util.LinkedHashSet::class.java },
+            )
 
         val knownInterfaceImplementations = mapOf(
             Map::class.java to mapClasses,
             java.util.Map::class.java to mapClasses,
             List::class.java to listClasses,
-            java.util.List::class.java to listClasses
+            java.util.List::class.java to listClasses,
+            Set::class.java to setClasses,
+            java.util.Set::class.java to setClasses
         )
 
         knownInterfaceImplementations[clazz]?.forEach {
