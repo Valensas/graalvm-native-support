@@ -121,8 +121,8 @@ object HintUtils {
             { java.util.AbstractSet::class.java },
             { java.util.BitSet::class.java },
             { java.util.EnumSet::class.java },
-            { java.util.LinkedHashSet::class.java },
-            )
+            { java.util.LinkedHashSet::class.java }
+        )
 
         val knownInterfaceImplementations = mapOf(
             Map::class.java to mapClasses,
