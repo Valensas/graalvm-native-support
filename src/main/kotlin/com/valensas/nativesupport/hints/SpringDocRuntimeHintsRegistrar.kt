@@ -1,5 +1,6 @@
 package com.valensas.nativesupport.hints
 
+import org.springframework.aot.hint.BindingReflectionHintsRegistrar
 import org.springframework.aot.hint.RuntimeHints
 import org.springframework.aot.hint.RuntimeHintsRegistrar
 
@@ -12,7 +13,7 @@ class SpringDocRuntimeHintsRegistrar : RuntimeHintsRegistrar {
         )
         classNames.forEach { className ->
             val clazz = classLoader?.loadClass(className) ?: return@forEach
-            hints.reflection().registerType(clazz)
+            BindingReflectionHintsRegistrar().registerReflectionHints(hints.reflection(), clazz)
         }
     }
 }
