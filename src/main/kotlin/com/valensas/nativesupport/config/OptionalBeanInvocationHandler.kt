@@ -13,7 +13,11 @@ class OptionalBeanInvocationHandler<T>(
     private val original: T,
     private val methodsToDisable: Set<Method>
 ) : InvocationHandler {
-    override fun invoke(proxy: Any, method: Method, args: Array<out Any>?): Any? {
+    override fun invoke(
+        proxy: Any,
+        method: Method,
+        args: Array<out Any>?
+    ): Any? {
         if (!enabled && methodsToDisable.contains(method)) return null
 
         return if (args != null) {

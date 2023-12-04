@@ -15,7 +15,10 @@ import org.springframework.data.util.TypeScanner
 class CustomRuntimeHintsRegistrar : RuntimeHintsRegistrar {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    override fun registerHints(hints: RuntimeHints, classLoader: ClassLoader?) {
+    override fun registerHints(
+        hints: RuntimeHints,
+        classLoader: ClassLoader?
+    ) {
         val packageNames = System.getProperty("com.valensas.nativesupport.reflect-packages") ?: return
         val packages = packageNames.split(",", " ", "\n").filter { it.isNotBlank() }
 

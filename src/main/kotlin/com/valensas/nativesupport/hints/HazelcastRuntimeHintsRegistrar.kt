@@ -11,8 +11,10 @@ import org.springframework.aot.hint.RuntimeHintsRegistrar
  * and related exception classes for serialization.
  */
 class HazelcastRuntimeHintsRegistrar : RuntimeHintsRegistrar {
-
-    override fun registerHints(hints: RuntimeHints, classLoader: ClassLoader?) {
+    override fun registerHints(
+        hints: RuntimeHints,
+        classLoader: ClassLoader?
+    ) {
         registerShutdown(hints, classLoader, "com.hazelcast.instance.impl.HazelcastInstanceProxy")
         HintUtils.registerSerializationHints(hints, StackTraceElement::class.java, classLoader!!)
 
@@ -22,7 +24,11 @@ class HazelcastRuntimeHintsRegistrar : RuntimeHintsRegistrar {
         }
     }
 
-    private fun registerShutdown(hints: RuntimeHints, classLoader: ClassLoader?, className: String) {
+    private fun registerShutdown(
+        hints: RuntimeHints,
+        classLoader: ClassLoader?,
+        className: String
+    ) {
         handlingMissingClass {
             val clazz = classLoader?.loadClass(className) ?: return@handlingMissingClass
             val shutdownMethod = clazz.getMethod("shutdown")
