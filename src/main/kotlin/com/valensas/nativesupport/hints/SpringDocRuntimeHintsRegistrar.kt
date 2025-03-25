@@ -12,7 +12,9 @@ class SpringDocRuntimeHintsRegistrar : RuntimeHintsRegistrar {
         val classNames =
             listOf(
                 "io.swagger.v3.oas.models.PathItem\$HttpMethod",
-                "io.swagger.v3.oas.models.PathItem"
+                "io.swagger.v3.oas.models.PathItem",
+                "java.lang.invoke.MethodHandles\$Lookup",
+                "java.lang.invoke.MethodHandles"
             )
         classNames.forEach { className ->
             val clazz = classLoader?.loadClass(className) ?: return@forEach
