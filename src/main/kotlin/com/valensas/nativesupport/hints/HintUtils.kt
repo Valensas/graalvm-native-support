@@ -128,7 +128,8 @@ object HintUtils {
             listOf(
                 { java.util.ArrayList::class.java },
                 { java.util.LinkedList::class.java },
-                { classLoader.loadClass("java.util.Collections\$EmptyList") }
+                { classLoader.loadClass("java.util.Collections\$EmptyList") },
+                { classLoader.loadClass("kotlin.collections.EmptyList") }
             )
         val setClasses =
             listOf(
