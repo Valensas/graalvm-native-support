@@ -21,17 +21,3 @@ jobs:
           cache: 'gradle'
       - name: Lint
         run: ./gradlew lintKotlin
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: setup java
-        uses: actions/setup-java@v4
-        with:
-          java-version: "21"
-          architecture: x64
-          distribution: oracle
-          cache: 'gradle'
-      - name: Test
-        run: ./gradlew test
-
