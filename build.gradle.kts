@@ -7,15 +7,17 @@ plugins {
     id("org.jmailen.kotlinter") version "4.1.0"
     id("maven-publish")
     id("java-library")
+    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.3"
 }
 
 group = "com.valensas"
-version = "1.0.4"
+version = "1.0.5"
 
 java.sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencyManagement {
@@ -45,25 +47,45 @@ tasks.test {
 }
 
 publishing {
-    repositories {
-        if (System.getenv("CI_API_V4_URL") != null) {
-            maven {
-                name = "Gitlab"
-                url = uri("${System.getenv("CI_API_V4_URL")}/projects/${System.getenv("CI_PROJECT_ID")}/packages/maven")
-                credentials(HttpHeaderCredentials::class.java) {
-                    name = "Job-Token"
-                    value = System.getenv("CI_JOB_TOKEN")
-                }
-                authentication {
-                    create("header", HttpHeaderAuthentication::class)
-                }
-            }
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
         }
     }
+}
 
-    publications {
-        create<MavenPublication>("artifact") {
-            from(components["java"])
+signing {
+    val keyId = System.getenv("SIGNING_KEYID")
+    val secretKey = System.getenv("SIGNING_SECRETKEY")
+    val passphrase = System.getenv("SIGNING_PASSPHRASE")
+
+    useInMemoryPgpKeys(keyId, secretKey, passphrase)
+}
+
+centralPortal {
+    username = System.getenv("SONATYPE_USERNAME")
+    password = System.getenv("SONATYPE_PASSWORD")
+
+    pom {
+        name = "Graalvm Native Support"
+        url = "https://valensas.com/"
+        scm {
+            url = "https://github.com/Valensas/graalvm-native-support"
+        }
+
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+
+        developers {
+            developer {
+                id.set("0")
+                name.set("Valensas")
+                email.set("info@valensas.com")
+            }
         }
     }
 }
