@@ -67,11 +67,10 @@ centralPortal {
     password = System.getenv("SONATYPE_PASSWORD")
 
     pom {
-        name = "Java Ftp"
-        description = "This library contains embedded ftp server and ftp factory which supports ftp, ftps, sftp."
+        name = "Graalvm Native Support"
         url = "https://valensas.com/"
         scm {
-            url = "https://github.com/Valensas/java-ftp"
+            url = "https://github.com/Valensas/graalvm-native-support"
         }
 
         licenses {
