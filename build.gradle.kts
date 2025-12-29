@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.valensas"
-version = "1.0.7"
+version = "1.0.8"
 
 java.sourceCompatibility = JavaVersion.VERSION_21
 
@@ -68,6 +68,7 @@ centralPortal {
 
     pom {
         name = "Graalvm Native Support"
+        description = "This library contains common utilities and runtime hints for GraalVM native images."
         url = "https://valensas.com/"
         scm {
             url = "https://github.com/Valensas/graalvm-native-support"
