@@ -4,10 +4,6 @@ import org.springframework.aot.hint.MemberCategory
 import org.springframework.aot.hint.RuntimeHints
 import org.springframework.aot.hint.RuntimeHintsRegistrar
 
-/**
- * Register reflection hints for Minio SDK classes required for GraalVM native image support.
- * Covers XML message classes, SimpleXML framework internals, and Args/Builder classes.
- */
 class MinioRuntimeHintsRegistrar : RuntimeHintsRegistrar {
     override fun registerHints(
         hints: RuntimeHints,
