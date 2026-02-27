@@ -1,5 +1,8 @@
 package com.valensas.nativesupport.hints
 
+import org.reflections.Reflections
+import org.reflections.scanners.Scanners
+import org.reflections.util.ConfigurationBuilder
 import org.springframework.aot.hint.MemberCategory
 import org.springframework.aot.hint.RuntimeHints
 import org.springframework.aot.hint.RuntimeHintsRegistrar
@@ -9,36 +12,23 @@ class MinioRuntimeHintsRegistrar : RuntimeHintsRegistrar {
         hints: RuntimeHints,
         classLoader: ClassLoader?
     ) {
-        registerByName(
-            hints,
-            classLoader,
-            "org.simpleframework.xml.core.TextLabel",
-            "io.minio.messages.LocationConstraint",
-            "io.minio.BaseArgs",
-            "io.minio.BaseArgs\$Builder",
-            "io.minio.GetObjectArgs",
-            "io.minio.GetObjectArgs\$Builder",
-            "io.minio.PutObjectArgs",
-            "io.minio.PutObjectArgs\$Builder",
-            "io.minio.StatObjectArgs",
-            "io.minio.StatObjectArgs\$Builder"
-        )
-    }
-
-    private fun registerByName(
-        hints: RuntimeHints,
-        classLoader: ClassLoader?,
-        vararg classNames: String
-    ) {
-        classNames.forEach { name ->
-            handlingMissingClass {
-                val clazz = classLoader?.loadClass(name) ?: return@handlingMissingClass
-                hints.reflection().registerType(
-                    clazz,
-                    MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                    MemberCategory.INVOKE_DECLARED_METHODS,
-                    MemberCategory.DECLARED_FIELDS
+        listOf("io.minio", "org.simpleframework.xml").forEach { pkg ->
+            val reflections =
+                Reflections(
+                    ConfigurationBuilder()
+                        .forPackage(pkg, classLoader ?: ClassLoader.getSystemClassLoader())
+                        .addScanners(Scanners.SubTypes.filterResultsBy { true })
                 )
+            reflections.getAll(Scanners.SubTypes).forEach { className ->
+                handlingMissingClass {
+                    val clazz = (classLoader ?: ClassLoader.getSystemClassLoader()).loadClass(className)
+                    hints.reflection().registerType(
+                        clazz,
+                        MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+                        MemberCategory.INVOKE_DECLARED_METHODS,
+                        MemberCategory.DECLARED_FIELDS
+                    )
+                }
             }
         }
     }
