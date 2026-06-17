@@ -17,19 +17,17 @@ interface ConfigurationPredicate<T> {
 
     operator fun not() = NotPredicate(this)
 
-    infix fun and(predicate: ConfigurationPredicate<T>) =
-        OperatorPredicate(
-            this,
-            predicate,
-            Boolean::and
-        )
+    infix fun and(predicate: ConfigurationPredicate<T>) = OperatorPredicate(
+        this,
+        predicate,
+        Boolean::and
+    )
 
-    infix fun or(predicate: ConfigurationPredicate<T>) =
-        OperatorPredicate(
-            this,
-            predicate,
-            Boolean::or
-        )
+    infix fun or(predicate: ConfigurationPredicate<T>) = OperatorPredicate(
+        this,
+        predicate,
+        Boolean::or
+    )
 
     fun masterSwitch(value: Boolean?) = MasterSwitchPredicate(value, this)
 }
