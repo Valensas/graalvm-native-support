@@ -1,17 +1,19 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.21"
-    kotlin("plugin.spring") version "1.9.21"
-    id("io.spring.dependency-management") version "1.1.4"
-    id("org.jmailen.kotlinter") version "4.1.0"
+    kotlin("jvm") version "2.4.0"
+    kotlin("plugin.spring") version "2.4.0"
+    id("io.spring.dependency-management") version "1.1.7"
+    id("org.jmailen.kotlinter") version "5.5.0"
     id("maven-publish")
     id("java-library")
-    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.3"
+    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.4"
 }
 
 group = "com.valensas"
-version = "1.0.10"
+
+extra["kotlin.version"] = "2.4.0"
 
 java.sourceCompatibility = JavaVersion.VERSION_21
 
@@ -21,7 +23,9 @@ repositories {
 }
 
 dependencyManagement {
-    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:3.2.0") }
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.15")
+    }
 }
 
 dependencies {
@@ -36,9 +40,9 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "21"
+    compilerOptions {
+        freeCompilerArgs.add("-Xjsr305=strict")
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 

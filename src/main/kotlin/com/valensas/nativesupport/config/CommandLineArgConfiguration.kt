@@ -17,12 +17,11 @@ interface CommandLineArgConfiguration {
     fun <T> conditionalListOnPredicate(
         predicate: ConfigurationPredicate<Collection<String>>,
         values: List<T>
-    ): List<T> =
-        if (predicate.test(args.sourceArgs.toList())) {
-            values
-        } else {
-            emptyList()
-        }
+    ): List<T> = if (predicate.test(args.sourceArgs.toList())) {
+        values
+    } else {
+        emptyList()
+    }
 
     /**
      * Conditionally create a bean based on the given predicate. The created
