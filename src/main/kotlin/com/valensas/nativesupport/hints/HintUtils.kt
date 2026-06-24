@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.aot.hint.RuntimeHints
 import java.io.Serializable
 import java.lang.reflect.Modifier
-import java.util.Set
+import kotlin.collections.Set
 
 object HintUtils {
     private val logger = LoggerFactory.getLogger(javaClass)

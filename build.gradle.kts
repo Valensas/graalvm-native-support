@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "com.valensas"
-
+version= "1.0.44"
 extra["kotlin.version"] = "2.4.0"
 
 java.sourceCompatibility = JavaVersion.VERSION_21
@@ -24,7 +24,8 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.15")
+        mavenBom("org.springframework.boot:spring-boot-dependencies:4.1.0")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.2")
     }
 }
 
@@ -52,9 +53,13 @@ tasks.test {
 
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        create("library", MavenPublication::class.java) {
+            artifactId = "graalvm-native-support"
             from(components["java"])
         }
+    }
+    repositories {
+        mavenLocal()
     }
 }
 
