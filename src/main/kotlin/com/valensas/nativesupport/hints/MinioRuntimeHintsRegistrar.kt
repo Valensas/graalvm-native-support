@@ -26,7 +26,7 @@ class MinioRuntimeHintsRegistrar : RuntimeHintsRegistrar {
                         clazz,
                         MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
                         MemberCategory.INVOKE_DECLARED_METHODS,
-                        MemberCategory.ACCESS_DECLARED_FIELDS
+                        MemberCategory.DECLARED_FIELDS
                     )
                 }
             }
