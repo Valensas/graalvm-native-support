@@ -12,10 +12,9 @@ plugins {
 }
 
 group = "com.valensas"
-
 extra["kotlin.version"] = "2.4.0"
 
-java.sourceCompatibility = JavaVersion.VERSION_21
+java.sourceCompatibility = JavaVersion.VERSION_25
 
 repositories {
     mavenCentral()
@@ -24,7 +23,8 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.15")
+        mavenBom("org.springframework.boot:spring-boot-dependencies:4.1.0")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.2")
     }
 }
 
@@ -42,7 +42,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
     compilerOptions {
         freeCompilerArgs.add("-Xjsr305=strict")
-        jvmTarget.set(JvmTarget.JVM_21)
+        jvmTarget.set(JvmTarget.JVM_25)
     }
 }
 
@@ -52,9 +52,13 @@ tasks.test {
 
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        create("library", MavenPublication::class.java) {
+            artifactId = "graalvm-native-support"
             from(components["java"])
         }
+    }
+    repositories {
+        mavenLocal()
     }
 }
 
