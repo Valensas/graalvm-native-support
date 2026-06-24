@@ -11,7 +11,6 @@ plugins {
     id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.4"
 }
 
-version = "1.0.46"
 group = "com.valensas"
 extra["kotlin.version"] = "2.4.0"
 
